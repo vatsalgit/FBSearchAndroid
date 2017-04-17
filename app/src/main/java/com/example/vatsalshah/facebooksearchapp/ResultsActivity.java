@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -28,13 +29,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ResultsActivity extends AppCompatActivity implements UserFragment.OnListFragmentInteractionListener,
         PageFragment.OnListFragmentInteractionListener,PlaceFragment.OnListFragmentInteractionListener,
 EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInteractionListener{
 
+    public static List<ResultItem> result_List;
+    private RecyclerView mRecyclerView;
+//    private MyRecyclerViewAdapter adapter;
+
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item)
+    public void onListFragmentInteraction(ResultItem item)
     {
 
     }
@@ -76,9 +82,6 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
         tabLayout.setupWithViewPager(mViewPager);
 
         mtext = (TextView)findViewById(R.id.display);
-        ArrayList<String> id_array = new ArrayList<String>();
-        ArrayList<String> names = new ArrayList<String>();
-        ArrayList<String> picture = new ArrayList<String>();
 
         Bundle extras = getIntent().getExtras();
         try {
@@ -89,18 +92,23 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
                  try {
                         JSONObject jsonObject = new JSONObject(result);
                         JSONArray result_array= new JSONArray(jsonObject.getString("data"));
+                        result_List = new ArrayList<>();
+
                         for (int i=0;i<result_array.length();i++)
                         {
                             JSONObject tempObject = result_array.getJSONObject(i);
-                            id_array.add(tempObject.getString("id").toString());
-                            names.add(tempObject.getString("name").toString());
-                            picture.add(tempObject.getString("picture").toString());
+                            ResultItem item = new ResultItem();
+
+                            item.setId(tempObject.getString("id").toString());
+                            item.setName(tempObject.getString("name").toString());
+                            String picture_url = tempObject.getJSONObject("picture").getJSONObject("data").getString("url");
+//                            Log.v("picture",picture_url);
+                            item.setPicture(picture_url);
+                            result_List.add(item);
 
                         }
 
-                        Log.v("id_data",id_array.toString());
-                        Log.v("names_data",names.toString());
-                        Log.v("pictures_data",picture.toString());
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
