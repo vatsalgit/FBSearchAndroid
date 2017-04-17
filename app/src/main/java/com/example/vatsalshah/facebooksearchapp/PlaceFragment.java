@@ -69,7 +69,7 @@ public class PlaceFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapterPlace(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapterPlace(ResultsActivity.processed_map.get("place"), mListener));
         }
         return view;
     }

@@ -37,12 +37,60 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     Button   mButton;
     EditText mEdit;
+    Intent intent;
 
+    public void Handle_Intent(String type, String result)
+    {
+
+        if(type=="user")
+        {
+            Log.v("response_user",result);
+            intent=new Intent(MainActivity.this, ResultsActivity.class);
+            intent.putExtra("Response_User",result);
+
+        }
+        else if(type=="page")
+        {
+            Log.v("response_page",result);
+            intent.putExtra("Response_Page",result);
+        }
+        else if(type=="event")
+        {
+            Log.v("response_event",result);
+            intent.putExtra("Response_Event",result);
+        }
+        else if(type=="place")
+        {
+            Log.v("response_place",result);
+            intent.putExtra("Response_Place",result);
+        }
+        else if(type=="group")
+        {
+            Log.v("response_group",result);
+            intent.putExtra("Response_Group",result);
+            startActivity(intent);
+        }
+
+    }
     public class onbuttonclickHttpPost extends AsyncTask<String, Void, String> {
+
+        String type;
+        Intent intent;
+
+
+        public void setType(String type)
+        {
+            this.type=type;
+        }
+        public String getType()
+        {
+            return this.type;
+        }
+
         @Override
         protected String doInBackground(String... params) {
             Log.v("Query",params[0]);
-
+            setType(params[1]);
             try {
                 byte[] result = null;
                 URL url = new URL("http://vatsal-angularenv.us-west-2.elasticbeanstalk.com/index.php/main.php?query="+params[0]+"&type="+params[1]);
@@ -78,10 +126,9 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected void onPostExecute(String result) {
             // something with data retrieved from server in doInBackground
-            Log.v("response",result);
-            Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
-            intent.putExtra("Response",result);
-            startActivity(intent);
+            type = getType();
+            Handle_Intent(type,result);
+
         }
     }
 
@@ -90,6 +137,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -115,7 +163,12 @@ public class MainActivity extends AppCompatActivity
                     {
                         String query = mEdit.getText().toString();
                         Log.v("EditText",query);
-                        new onbuttonclickHttpPost().execute(query,"user");
+                        String types[] = new String[] {"user","page","event","place","group"};
+                        for (String type:types)
+                        {
+                            new onbuttonclickHttpPost().execute(query,type);
+                        }
+
 
                     }
                 });

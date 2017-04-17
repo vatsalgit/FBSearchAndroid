@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,8 @@ public class UserFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapterUser(ResultsActivity.result_List, mListener));
+//            Log.v("Processed Map",ResultsActivity.processed_map.get("user").toString());
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapterUser(ResultsActivity.processed_map.get("user"), mListener));
         }
         return view;
     }

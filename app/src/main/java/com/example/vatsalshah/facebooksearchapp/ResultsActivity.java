@@ -29,19 +29,58 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ResultsActivity extends AppCompatActivity implements UserFragment.OnListFragmentInteractionListener,
         PageFragment.OnListFragmentInteractionListener,PlaceFragment.OnListFragmentInteractionListener,
 EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInteractionListener{
 
-    public static List<ResultItem> result_List;
+    public static HashMap<String,List<ResultItem>> processed_map = new HashMap<String,List<ResultItem>>();
+    HashMap<String,String> raw_map = new HashMap<String,String>();
     private RecyclerView mRecyclerView;
 //    private MyRecyclerViewAdapter adapter;
 
     @Override
     public void onListFragmentInteraction(ResultItem item)
     {
+
+    }
+
+    public void Process_JSON_Strings()
+    {
+
+        for(String key:raw_map.keySet())
+        {
+            String result=raw_map.get(key);
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                JSONArray result_array= new JSONArray(jsonObject.getString("data"));
+                ArrayList result_List = new ArrayList<>();
+
+                for (int i=0;i<result_array.length();i++)
+                {
+                    JSONObject tempObject = result_array.getJSONObject(i);
+                    ResultItem item = new ResultItem();
+
+                    item.setId(tempObject.getString("id").toString());
+                    item.setName(tempObject.getString("name").toString());
+                    String picture_url = tempObject.getJSONObject("picture").getJSONObject("data").getString("url");
+//                            Log.v("picture",picture_url);
+                    item.setPicture(picture_url);
+                    result_List.add(item);
+
+                }
+                processed_map.put(key,result_List);
+//                Log.v("processed_map",processed_map.toString());
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
 
     }
 
@@ -62,6 +101,7 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,35 +126,21 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
         Bundle extras = getIntent().getExtras();
         try {
             if (extras != null) {
-                String result = extras.getString("Response");
-                Log.v("Results activity", result);
 
-                 try {
-                        JSONObject jsonObject = new JSONObject(result);
-                        JSONArray result_array= new JSONArray(jsonObject.getString("data"));
-                        result_List = new ArrayList<>();
+                raw_map.put("user",extras.getString("Response_User"));
+                raw_map.put("page",extras.getString("Response_Page"));
+                raw_map.put("event",extras.getString("Response_Event"));
+                raw_map.put("place",extras.getString("Response_Place"));
+                raw_map.put("group",extras.getString("Response_Group"));
 
-                        for (int i=0;i<result_array.length();i++)
-                        {
-                            JSONObject tempObject = result_array.getJSONObject(i);
-                            ResultItem item = new ResultItem();
-
-                            item.setId(tempObject.getString("id").toString());
-                            item.setName(tempObject.getString("name").toString());
-                            String picture_url = tempObject.getJSONObject("picture").getJSONObject("data").getString("url");
-//                            Log.v("picture",picture_url);
-                            item.setPicture(picture_url);
-                            result_List.add(item);
-
-                        }
+                Log.v("Results_User", extras.getString("Response_User"));
+                Log.v("Results_Page", extras.getString("Response_Page"));
+                Log.v("Results_Event", extras.getString("Response_Event"));
+                Log.v("Results_Place", extras.getString("Response_Place"));
+                Process_JSON_Strings();
 
 
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-
-                    }
-                }
+            }
 
 //            mtext.setText(result);
         }

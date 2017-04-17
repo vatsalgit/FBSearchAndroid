@@ -69,7 +69,7 @@ public class PageFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapterPage(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapterPage(ResultsActivity.processed_map.get("page"), mListener));
         }
         return view;
     }
