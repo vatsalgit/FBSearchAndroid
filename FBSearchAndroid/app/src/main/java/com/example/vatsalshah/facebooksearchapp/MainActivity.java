@@ -41,30 +41,17 @@ public class MainActivity extends AppCompatActivity
     public class onbuttonclickHttpPost extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
+            Log.v("Query",params[0]);
 
             try {
                 byte[] result = null;
-                URL url = new URL("http://vatsal-angularenv.us-west-2.elasticbeanstalk.com/index.php/main.php");
+                URL url = new URL("http://vatsal-angularenv.us-west-2.elasticbeanstalk.com/index.php/main.php?query="+params[0]+"&type="+params[1]);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
                 conn.setRequestMethod("GET");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
-
-                Uri.Builder builder = new Uri.Builder()
-                        .appendQueryParameter("query", "usc")
-                        .appendQueryParameter("type", "user");
-//                    .appendQueryParameter("thirdParam", paramValue3);
-                String query = builder.build().getEncodedQuery();
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(query);
-                writer.flush();
-                writer.close();
-                os.close();
 
                 conn.connect();
 
@@ -128,7 +115,7 @@ public class MainActivity extends AppCompatActivity
                     {
                         String query = mEdit.getText().toString();
                         Log.v("EditText",query);
-                        new onbuttonclickHttpPost().execute((String) null);
+                        new onbuttonclickHttpPost().execute(query,"user");
 
                     }
                 });

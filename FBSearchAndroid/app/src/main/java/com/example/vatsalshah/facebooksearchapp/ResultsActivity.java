@@ -21,13 +21,26 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ResultsActivity extends AppCompatActivity {
+public class ResultsActivity extends AppCompatActivity implements UserFragment.OnListFragmentInteractionListener,
+        PageFragment.OnListFragmentInteractionListener,PlaceFragment.OnListFragmentInteractionListener,
+EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInteractionListener{
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item)
+    {
+
+    }
+
+
+
     TextView mtext;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -64,8 +77,9 @@ public class ResultsActivity extends AppCompatActivity {
 
         mtext = (TextView)findViewById(R.id.display);
         ArrayList<String> id_array = new ArrayList<String>();
-//        ArrayList<String> id_array = new ArrayList<String>();
-        
+        ArrayList<String> names = new ArrayList<String>();
+        ArrayList<String> picture = new ArrayList<String>();
+
         Bundle extras = getIntent().getExtras();
         try {
             if (extras != null) {
@@ -78,10 +92,15 @@ public class ResultsActivity extends AppCompatActivity {
                         for (int i=0;i<result_array.length();i++)
                         {
                             JSONObject tempObject = result_array.getJSONObject(i);
-                            Log.v("json_data",tempObject.getString("id").toString());
+                            id_array.add(tempObject.getString("id").toString());
+                            names.add(tempObject.getString("name").toString());
+                            picture.add(tempObject.getString("picture").toString());
+
                         }
 
-//                          notice_array.add(jsonObject.getString("notice").toString());
+                        Log.v("id_data",id_array.toString());
+                        Log.v("names_data",names.toString());
+                        Log.v("pictures_data",picture.toString());
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -168,26 +187,46 @@ public class ResultsActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch (position)
+            {
+                case 0:
+                    UserFragment user = new UserFragment();
+                    return user;
+                case 1:
+                    PageFragment page = new PageFragment();
+                    return page;
+                case 2:
+                    EventFragment event = new EventFragment();
+                    return event;
+                case 3:
+                    PlaceFragment place = new PlaceFragment();
+                    return place;
+                case 4:
+                    GroupFragment group = new GroupFragment();
+                    return group;
+            }
+            return null;
         }
 
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 5;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "Users";
                 case 1:
-                    return "SECTION 2";
+                    return "Pages";
                 case 2:
-                    return "SECTION 3";
+                    return "Events";
+                case 3:
+                    return "Places";
+                case 4:
+                    return "Groups";
             }
             return null;
         }
