@@ -19,18 +19,18 @@
         android:layout_margin="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem" />
 
-    <TextView
-        android:id="@+id/details"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
-
-    <TextView
+    <ImageButton
         android:id="@+id/fav"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem" />
+        android:layout_margin="16dp"
+        android:src="@drawable/favorites_off" />
+
+    <ImageButton
+        android:id="@+id/details"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        android:src="@drawable/details" />
 
 </LinearLayout>

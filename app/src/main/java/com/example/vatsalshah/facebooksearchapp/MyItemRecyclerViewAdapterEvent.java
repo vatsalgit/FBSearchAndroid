@@ -48,8 +48,8 @@ public class MyItemRecyclerViewAdapterEvent extends RecyclerView.Adapter<MyItemR
         Picasso.with(mcontext).load(Item.getPicture()).resize(40,60).into(holder.mPictureView);
 
         holder.mNameView.setText(Item.getName());
-        holder.mDetailsView.setText("Details");
-        holder.mFavView.setText("Fav");
+//        holder.mDetailsView.setText("Details");
+//        holder.mFavView.setText("Fav");
 
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -72,10 +72,10 @@ public class MyItemRecyclerViewAdapterEvent extends RecyclerView.Adapter<MyItemR
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mFavView;
+//        public final TextView mFavView;
         public final ImageView mPictureView;
         public final TextView mNameView;
-        public final TextView mDetailsView;
+//        public final TextView mDetailsView;
         public ResultItem mItem;
 
         public ViewHolder(View view) {
@@ -83,8 +83,8 @@ public class MyItemRecyclerViewAdapterEvent extends RecyclerView.Adapter<MyItemR
             mView = view;
             mPictureView = (ImageView) view.findViewById(R.id.picture);
             mNameView  = (TextView) view.findViewById(R.id.name);
-            mDetailsView  = (TextView) view.findViewById(R.id.details);
-            mFavView = (TextView) view.findViewById(R.id.fav);
+//            mDetailsView  = (TextView) view.findViewById(R.id.details);
+//            mFavView = (TextView) view.findViewById(R.id.fav);
 
         }
 
