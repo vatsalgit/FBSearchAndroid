@@ -1,5 +1,7 @@
 package com.example.vatsalshah.facebooksearchapp;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Vatsal Shah on 16-04-2017.
  */

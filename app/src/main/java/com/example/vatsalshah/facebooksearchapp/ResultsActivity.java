@@ -1,5 +1,9 @@
 package com.example.vatsalshah.facebooksearchapp;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,13 +17,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import android.widget.TextView;
 
 import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent;
@@ -28,6 +38,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +62,28 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
     public void onListFragmentInteraction(ResultItem item)
     {
 
+    }
+
+    public static void closeStream(Closeable s){
+        try{
+            if(s!=null)s.close();
+        }catch(IOException e){
+            //Log or rethrow as unchecked (like RuntimException) ;)
+        }
+    }
+
+    public static Bitmap loadBitmap(String url)
+    {
+        try
+        {
+        Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(url).getContent());
+        return bitmap;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void Process_JSON_Strings()
@@ -66,7 +105,12 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
                     item.setId(tempObject.getString("id").toString());
                     item.setName(tempObject.getString("name").toString());
                     String picture_url = tempObject.getJSONObject("picture").getJSONObject("data").getString("url");
-//                            Log.v("picture",picture_url);
+                    Log.v(key,picture_url);
+//                    Bitmap bitmap = loadBitmap(picture_url);
+//                    if (bitmap!=null)
+//                    {
+//                        Log.v("picture_null",bitmap.toString());
+//                    }
                     item.setPicture(picture_url);
                     result_List.add(item);
 
@@ -114,12 +158,31 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
+
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        tabLayout.setTabTextColors(Color.parseColor("#000000"),Color.parseColor("#000000"));
+
+        int[] imageResId = {
+                R.drawable.users,
+                R.drawable.pages,
+                R.drawable.events,
+                R.drawable.places,
+                R.drawable.groups
+        };
+
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            tabLayout.getTabAt(i).setIcon(imageResId[i]);
+
+        }
+
+
+
 
         mtext = (TextView)findViewById(R.id.display);
 
@@ -247,6 +310,9 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
             // Show 3 total pages.
             return 5;
         }
+
+
+
 
         @Override
         public CharSequence getPageTitle(int position) {

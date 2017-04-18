@@ -71,7 +71,7 @@ public class UserFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 //            Log.v("Processed Map",ResultsActivity.processed_map.get("user").toString());
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapterUser(ResultsActivity.processed_map.get("user"), mListener));
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapterUser(ResultsActivity.processed_map.get("user"), mListener,context));
         }
         return view;
     }

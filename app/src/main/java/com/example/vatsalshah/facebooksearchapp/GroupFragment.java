@@ -69,7 +69,7 @@ public class GroupFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapterGroup(ResultsActivity.processed_map.get("group"), mListener));
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapterGroup(ResultsActivity.processed_map.get("group"), mListener,context));
         }
         return view;
     }
