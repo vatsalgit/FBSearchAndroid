@@ -35,7 +35,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    Button   mButton;
+    Button mButton;
+    Button mClearButton;
     EditText mEdit;
     Intent intent;
 
@@ -128,6 +129,7 @@ public class MainActivity extends AppCompatActivity
             // something with data retrieved from server in doInBackground
             type = getType();
             Handle_Intent(type,result);
+//            Log.v("Response Returned", result);
 
         }
     }
@@ -154,6 +156,7 @@ public class MainActivity extends AppCompatActivity
 
 
         mButton = (Button)findViewById(R.id.searchbutton);
+        mClearButton = (Button)findViewById(R.id.clearbutton);
         mEdit   = (EditText)findViewById(R.id.edit_query);
 
         mButton.setOnClickListener(
@@ -169,6 +172,16 @@ public class MainActivity extends AppCompatActivity
                             new onbuttonclickHttpPost().execute(query,type);
                         }
 
+
+                    }
+                });
+
+        mClearButton.setOnClickListener(
+                new View.OnClickListener()
+                {
+                    public void onClick(View view)
+                    {
+                        mEdit.setText("");
 
                     }
                 });

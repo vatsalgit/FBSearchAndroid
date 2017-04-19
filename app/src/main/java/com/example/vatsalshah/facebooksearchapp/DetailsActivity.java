@@ -1,15 +1,10 @@
 package com.example.vatsalshah.facebooksearchapp;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -17,94 +12,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ImageSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+
 import android.widget.TextView;
 
 import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+public class DetailsActivity extends AppCompatActivity implements AlbumsFragment.OnListFragmentInteractionListener,
+PostFragment.OnListFragmentInteractionListener
+{
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-public class ResultsActivity extends AppCompatActivity implements UserFragment.OnListFragmentInteractionListener,
-        PageFragment.OnListFragmentInteractionListener,PlaceFragment.OnListFragmentInteractionListener,
-EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInteractionListener{
-
-    public static HashMap<String,List<ResultItem>> processed_map = new HashMap<String,List<ResultItem>>();
-    HashMap<String,String> raw_map = new HashMap<String,String>();
-    private RecyclerView mRecyclerView;
-//    private MyRecyclerViewAdapter adapter;
-
-    @Override
-    public void onListFragmentInteraction(ResultItem item)
-    {
-
-    }
-
-    public void Process_JSON_Strings()
-    {
-
-        for(String key:raw_map.keySet())
-        {
-            String result=raw_map.get(key);
-            try {
-                JSONObject jsonObject = new JSONObject(result);
-                JSONArray result_array= new JSONArray(jsonObject.getString("data"));
-                ArrayList result_List = new ArrayList<>();
-
-                for (int i=0;i<result_array.length();i++)
-                {
-                    JSONObject tempObject = result_array.getJSONObject(i);
-                    ResultItem item = new ResultItem();
-
-                    item.setId(tempObject.getString("id").toString());
-                    item.setName(tempObject.getString("name").toString());
-                    String picture_url = tempObject.getJSONObject("picture").getJSONObject("data").getString("url");
-                    Log.v(key,picture_url);
-
-                    item.setPicture(picture_url);
-                    result_List.add(item);
-
-                }
-                processed_map.put(key,result_List);
-//                Log.v("processed_map",processed_map.toString());
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-        }
-
-
-    }
-
-
-
-    TextView mtext;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -113,6 +34,11 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item)
+    {
+
+    }
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -120,18 +46,16 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
      */
     private ViewPager mViewPager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_results);
+        setContentView(R.layout.activity_details);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -143,11 +67,8 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
         tabLayout.setTabTextColors(Color.parseColor("#000000"),Color.parseColor("#000000"));
 
         int[] imageResId = {
-                R.drawable.users,
-                R.drawable.pages,
-                R.drawable.events,
-                R.drawable.places,
-                R.drawable.groups
+                R.drawable.albums,
+                R.drawable.posts
         };
 
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
@@ -156,43 +77,13 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
         }
 
 
-
-
-        mtext = (TextView)findViewById(R.id.display);
-
-        Bundle extras = getIntent().getExtras();
-        try {
-            if (extras != null) {
-
-                raw_map.put("user",extras.getString("Response_User"));
-                raw_map.put("page",extras.getString("Response_Page"));
-                raw_map.put("event",extras.getString("Response_Event"));
-                raw_map.put("place",extras.getString("Response_Place"));
-                raw_map.put("group",extras.getString("Response_Group"));
-
-                Log.v("Results_User", extras.getString("Response_User"));
-                Log.v("Results_Page", extras.getString("Response_Page"));
-                Log.v("Results_Event", extras.getString("Response_Event"));
-                Log.v("Results_Place", extras.getString("Response_Place"));
-                Process_JSON_Strings();
-
-
-            }
-
-//            mtext.setText(result);
-        }
-        catch (Exception e)
-        {
-
-        }
-
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_results, menu);
+        getMenuInflater().inflate(R.menu.menu_details, menu);
         return true;
     }
 
@@ -239,7 +130,7 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_results, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_details, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
@@ -258,49 +149,33 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
 
         @Override
         public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position)
             {
                 case 0:
-                    UserFragment user = new UserFragment();
-                    return user;
+                    AlbumsFragment album = new AlbumsFragment();
+                    return album;
                 case 1:
-                    PageFragment page = new PageFragment();
-                    return page;
-                case 2:
-                    EventFragment event = new EventFragment();
-                    return event;
-                case 3:
-                    PlaceFragment place = new PlaceFragment();
-                    return place;
-                case 4:
-                    GroupFragment group = new GroupFragment();
-                    return group;
+                    PostFragment post = new PostFragment();
+                    return post;
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 5;
+            // Show 2 total pages.
+            return 2;
         }
-
-
-
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Users";
+                    return "Albums";
                 case 1:
-                    return "Pages";
-                case 2:
-                    return "Events";
-                case 3:
-                    return "Places";
-                case 4:
-                    return "Groups";
+                    return "Posts";
             }
             return null;
         }

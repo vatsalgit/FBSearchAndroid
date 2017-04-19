@@ -1,10 +1,13 @@
 package com.example.vatsalshah.facebooksearchapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,7 +45,7 @@ public class MyItemRecyclerViewAdapterGroup extends RecyclerView.Adapter<MyItemR
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        ResultItem Item = resultItemList.get(position);
+        final ResultItem Item = resultItemList.get(position);
         holder.mItem = Item;
         Picasso.with(mcontext).load(Item.getPicture()).resize(40,60).into(holder.mPictureView);
 
@@ -52,16 +55,33 @@ public class MyItemRecyclerViewAdapterGroup extends RecyclerView.Adapter<MyItemR
 //        holder.mFavView.setText("Fav");
 
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.mDetailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
+                    Log.v("Clicked On: ",Item.getName());
+                    Intent intent=new Intent(mcontext, DetailsActivity.class);
+                    mcontext.startActivity(intent);
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
         });
+
+        holder.mFavButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    Log.v("Clicked On: ",Item.getName());
+                    mListener.onListFragmentInteraction(holder.mItem);
+                }
+            }
+        });
+
+
     }
 
     @Override
@@ -75,7 +95,8 @@ public class MyItemRecyclerViewAdapterGroup extends RecyclerView.Adapter<MyItemR
 //        public final TextView mFavView;
         public final ImageView mPictureView;
         public final TextView mNameView;
-//        public final TextView mDetailsView;
+        public final ImageButton mDetailsButton;
+        public final ImageButton mFavButton;
         public ResultItem mItem;
 
         public ViewHolder(View view) {
@@ -83,11 +104,10 @@ public class MyItemRecyclerViewAdapterGroup extends RecyclerView.Adapter<MyItemR
             mView = view;
             mPictureView = (ImageView) view.findViewById(R.id.picture);
             mNameView  = (TextView) view.findViewById(R.id.name);
-//            mDetailsView  = (TextView) view.findViewById(R.id.details);
-//            mFavView = (TextView) view.findViewById(R.id.fav);
+            mDetailsButton  = (ImageButton) view.findViewById(R.id.details);
+            mFavButton = (ImageButton) view.findViewById(R.id.fav);
 
         }
-
 //        @Override
 //        public String toString() {
 //            return super.toString() + " '" + mContentView.getText() + "'";
