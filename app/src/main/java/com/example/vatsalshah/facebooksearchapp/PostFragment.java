@@ -69,7 +69,7 @@ public class PostFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new PostAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new PostAdapter(DetailsActivity.Post_List, mListener,context));
         }
         return view;
     }
@@ -104,6 +104,6 @@ public class PostFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(PostItem item);
     }
 }

@@ -2,6 +2,7 @@ package com.example.vatsalshah.facebooksearchapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,11 @@ import com.example.vatsalshah.facebooksearchapp.UserFragment.OnListFragmentInter
 import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent.DummyItem;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -56,6 +62,56 @@ public class MyItemRecyclerViewAdapterUser extends RecyclerView.Adapter<MyItemRe
 //        holder.mFavView.setText("Fav");
 
 
+        class getDetails extends AsyncTask<String, Void, String> {
+
+
+            @Override
+            protected String doInBackground(String... params) {
+                Log.v("Id", params[0]);
+                try {
+                    byte[] result = null;
+                    URL url = new URL("http://vatsal-angularenv.us-west-2.elasticbeanstalk.com/index.php/main.php?details="+params[0]);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000);
+                    conn.setConnectTimeout(15000);
+                    conn.setRequestMethod("GET");
+                    conn.setDoInput(true);
+                    conn.setDoOutput(true);
+
+                    conn.connect();
+
+                    if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line + "\n");
+                        }
+                        br.close();
+                        return sb.toString();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(String result) {
+                // something with data retrieved from server in doInBackground
+                Intent intent=new Intent(mcontext, DetailsActivity.class);
+                mcontext.startActivity(intent);
+                intent.putExtra("Details_Returned",result);
+
+                Log.v("ResultActivity_Returned", result);
+            }
+        }
+
+
+
 
         holder.mDetailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,8 +120,8 @@ public class MyItemRecyclerViewAdapterUser extends RecyclerView.Adapter<MyItemRe
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     Log.v("Clicked On: ",Item.getName());
-                    Intent intent=new Intent(mcontext, DetailsActivity.class);
-                    mcontext.startActivity(intent);
+                    String id = Item.getId();
+                    new getDetails().execute(id);
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
             }

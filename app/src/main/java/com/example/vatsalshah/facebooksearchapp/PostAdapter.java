@@ -1,13 +1,17 @@
 package com.example.vatsalshah.facebooksearchapp;
 
+import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vatsalshah.facebooksearchapp.PostFragment.OnListFragmentInteractionListener;
 import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent.DummyItem;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -18,12 +22,15 @@ import java.util.List;
  */
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private List<PostItem> postItemList;
+    private Context mcontext;
     private final OnListFragmentInteractionListener mListener;
 
-    public PostAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
-        mListener = listener;
+    public PostAdapter(List<PostItem> postItemList, OnListFragmentInteractionListener listener,Context context) {
+        this.postItemList = postItemList;
+        this.mListener = listener;
+        this.mcontext = context;
+
     }
 
     @Override
@@ -35,9 +42,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        final PostItem Item = postItemList.get(position);
+        holder.mItem = Item;
+        Picasso.with(mcontext).load(Item.getPicture()).into(holder.PostPicture);
+
+        holder.NameView.setText(Item.getName());
+
+        holder.DateView.setText(Item.getDate().replace("T"," ").substring(0,Item.getDate().length()-5));
+        holder.PostContent.setText(Item.getPost());
+
+
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,25 +67,30 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return (null != postItemList ? postItemList.size() : 0);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView NameView;
+        public final TextView PostContent;
+        public final TextView DateView;
+        public final ImageView PostPicture;
+
+        public PostItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            NameView = (TextView) view.findViewById(R.id.post_name);
+            PostContent = (TextView) view.findViewById(R.id.post_content);
+            DateView = (TextView) view.findViewById(R.id.post_date);
+            PostPicture = (ImageView) view.findViewById(R.id.post_img);
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
-        }
+//        @Override
+//        public String toString() {
+//            return super.toString() + " '" + mContentView.getText() + "'";
+//        }
     }
 }

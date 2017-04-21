@@ -1,6 +1,7 @@
 package com.example.vatsalshah.facebooksearchapp;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,9 +24,21 @@ import android.widget.TextView;
 
 import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent;
 
-public class DetailsActivity extends AppCompatActivity implements AlbumsFragment.OnListFragmentInteractionListener,
-PostFragment.OnListFragmentInteractionListener
-{
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class DetailsActivity extends AppCompatActivity implements AlbumsFragment.OnFragmentInteractionListener,
+PostFragment.OnListFragmentInteractionListener {
+
+    static List<String> listDataHeader;
+    static HashMap<String, List<String>> listDataChild;
+    static List<PostItem> Post_List;
+
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -35,10 +49,14 @@ PostFragment.OnListFragmentInteractionListener
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item)
-    {
+    public void onFragmentInteraction(Uri uri) {
 
     }
+
+    public void onListFragmentInteraction(PostItem item) {
+
+    }
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -53,6 +71,13 @@ PostFragment.OnListFragmentInteractionListener
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("More Details");
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -64,7 +89,7 @@ PostFragment.OnListFragmentInteractionListener
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        tabLayout.setTabTextColors(Color.parseColor("#000000"),Color.parseColor("#000000"));
+        tabLayout.setTabTextColors(Color.parseColor("#000000"), Color.parseColor("#000000"));
 
         int[] imageResId = {
                 R.drawable.albums,
@@ -77,7 +102,80 @@ PostFragment.OnListFragmentInteractionListener
         }
 
 
+        Bundle extras = getIntent().getExtras();
+        try {
+            if (extras != null) {
+                String details = extras.getString("Details_Returned");
+                Log.v("Details Activity Got:", details);
+                Process_JSON(details);
+            }
+
+//            mtext.setText(result);
+        } catch (Exception e) {
+
+        }
+
+
     }
+
+    public void Process_JSON(String result) {
+//        Get Posts
+        try {
+
+            JSONArray posts_array = new JSONObject(result).getJSONObject("posts").getJSONArray("data");
+
+            Post_List = new ArrayList<PostItem>();
+
+            for (int i = 0; i < posts_array.length(); i++) {
+                JSONObject tempObject = posts_array.getJSONObject(i);
+                PostItem item = new PostItem();
+                item.setPicture(new JSONObject(result).getJSONObject("picture").getJSONObject("data").getString("url"));
+                item.setName(new JSONObject(result).getString("name"));
+                item.setDate(tempObject.getString("created_time"));
+                item.SetPost(tempObject.getString("message"));
+                Post_List.add(item);
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+//        Get Albums
+            try {
+            JSONObject jsonObject = new JSONObject(result).getJSONObject("albums");
+            JSONArray albums_array = new JSONArray(jsonObject.getString("data"));
+
+            listDataHeader = new ArrayList<String>();
+            listDataChild = new HashMap<String, List<String>>();
+
+            for (int i=0;i<albums_array.length();i++)
+            {
+                JSONObject tempObject = albums_array.getJSONObject(i);
+                listDataHeader.add(tempObject.getString("name"));
+                JSONArray photo = tempObject.getJSONObject("photos").getJSONArray("data");
+                ArrayList pictures=new ArrayList();
+                for(int j=0;j<photo.length();j++)
+                {
+                    String picture=photo.getJSONObject(j).getJSONArray("images").getJSONObject(0).getString("source");
+                    pictures.add(picture);
+//                    Log.v("Photos",picture.toString());
+                }
+                listDataChild.put(listDataHeader.get(i),pictures);
+
+            }
+            Log.v("Albums",listDataHeader.toString());
+//            String x =listDataHeader.get(0);
+            Log.v("Map",listDataChild.toString());
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 
 
     @Override
@@ -93,6 +191,10 @@ PostFragment.OnListFragmentInteractionListener
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // close this activity and return to preview activity (if there is any)
+        }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
