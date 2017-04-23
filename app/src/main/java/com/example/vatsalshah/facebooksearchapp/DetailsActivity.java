@@ -1,5 +1,8 @@
 package com.example.vatsalshah.facebooksearchapp;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.design.widget.TabLayout;
@@ -28,12 +31,25 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
+
 public class DetailsActivity extends AppCompatActivity implements AlbumsFragment.OnFragmentInteractionListener,
 PostFragment.OnListFragmentInteractionListener {
+    CallbackManager callbackManager;
+    ShareDialog shareDialog;
 
     public static List<String> listDataHeader;
     public static HashMap<String, List<String>> listDataChild;
@@ -67,6 +83,7 @@ PostFragment.OnListFragmentInteractionListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_details);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -118,11 +135,23 @@ PostFragment.OnListFragmentInteractionListener {
         }
 
 
+
+
+
+
+
     }
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     public void Process_JSON(String result) {
 //        Get Posts
         try {
+
 
             JSONArray posts_array = new JSONObject(result).getJSONObject("posts").getJSONArray("data");
 
@@ -199,12 +228,49 @@ PostFragment.OnListFragmentInteractionListener {
         }
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.add_to_fav) {
             return true;
         }
 
+        if(id== R.id.post_to_fb)
+        {
+            callbackManager = CallbackManager.Factory.create();
+            shareDialog = new ShareDialog(this);
+//            Bitmap image=getBitmapFromURL(Post_List.get(0).getPicture());
+            if (ShareDialog.canShow(ShareLinkContent.class)) {
+                ShareLinkContent content = new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse("www.google.com"))
+                .setContentDescription("FB Search from USC CSCI 571")
+                .setImageUrl(Uri.parse(Post_List.get(0).getPicture()))
+                .setContentTitle(Post_List.get(0).getName())
+
+                .build();
+                shareDialog.show(content);
+            }
+        }
+
+
         return super.onOptionsItemSelected(item);
     }
+
+
+
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            // Log exception
+            return null;
+        }
+    }
+
+
 
     /**
      * A placeholder fragment containing a simple view.

@@ -1,0 +1,6 @@
+Add/Remove Fav Button 
+No Albums No Posts Check
+Pagination 
+Toasts
+Albums Image Size Check
+Final check of requirements to make sure everything is covered
