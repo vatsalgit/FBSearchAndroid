@@ -267,22 +267,38 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
 
         @Override
         public Fragment getItem(int position) {
+            Bundle args;
             switch (position)
             {
                 case 0:
                     UserFragment user = new UserFragment();
+//                    args = new Bundle();
+//                    args.putInt("fav",0);
+//                    user.setArguments(args);
                     return user;
                 case 1:
                     PageFragment page = new PageFragment();
+//                    args = new Bundle();
+//                    args.putInt("fav",0);
+//                    page.setArguments(args);
                     return page;
                 case 2:
                     EventFragment event = new EventFragment();
+//                    args = new Bundle();
+//                    args.putInt("fav",0);
+//                    event.setArguments(args);
                     return event;
                 case 3:
                     PlaceFragment place = new PlaceFragment();
+//                    args = new Bundle();
+//                    args.putInt("fav",0);
+//                    place.setArguments(args);
                     return place;
                 case 4:
                     GroupFragment group = new GroupFragment();
+//                    args = new Bundle();
+//                    args.putInt("fav",0);
+//                    group.setArguments(args);
                     return group;
             }
             return null;

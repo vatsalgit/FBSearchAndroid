@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,13 +29,17 @@ public class EventFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private boolean FAV=false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public EventFragment() {
+    public EventFragment()
+    {
+
     }
+
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
@@ -59,6 +64,11 @@ public class EventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_list, container, false);
+
+//        Bundle args = getArguments();
+//        int index = args.getInt("fav", -1);
+//        Log.v("index",index+"");
+
 
         // Set the adapter
         if (view instanceof RecyclerView) {

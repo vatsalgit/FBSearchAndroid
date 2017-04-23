@@ -72,8 +72,8 @@ public class AlbumsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
-                .size();
+        return null != _listDataChild ? this._listDataChild.get(this._listDataHeader.get(groupPosition))
+                .size():0;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class AlbumsAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getGroupCount() {
-        return this._listDataHeader.size();
+        return null != _listDataHeader ? _listDataHeader.size() : 0;
     }
 
     @Override

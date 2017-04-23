@@ -40,9 +40,9 @@ public class PostFragment extends Fragment {
     @SuppressWarnings("unused")
     public static PostFragment newInstance(int columnCount) {
         PostFragment fragment = new PostFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putInt(ARG_COLUMN_COUNT, columnCount);
+//        fragment.setArguments(args);
         return fragment;
     }
 

@@ -1,7 +1,6 @@
 package com.example.vatsalshah.facebooksearchapp;
 
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,23 +20,7 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-public class DetailsActivity extends AppCompatActivity implements AlbumsFragment.OnFragmentInteractionListener,
-PostFragment.OnListFragmentInteractionListener {
-
-    public static List<String> listDataHeader;
-    public static HashMap<String, List<String>> listDataChild;
-    public static List<PostItem> Post_List;
-
+public class Favorites_Activity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -48,15 +30,6 @@ PostFragment.OnListFragmentInteractionListener {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
-    public void onListFragmentInteraction(PostItem item) {
-
-    }
-
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -67,17 +40,16 @@ PostFragment.OnListFragmentInteractionListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+        setContentView(R.layout.activity_favorites_);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("More Details");
+        getSupportActionBar().setTitle("Favorites");
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -88,12 +60,17 @@ PostFragment.OnListFragmentInteractionListener {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-        tabLayout.setTabTextColors(Color.parseColor("#000000"), Color.parseColor("#000000"));
+        tabLayout.setTabTextColors(Color.parseColor("#000000"),Color.parseColor("#000000"));
 
         int[] imageResId = {
-                R.drawable.albums,
-                R.drawable.posts
+                R.drawable.users,
+                R.drawable.pages,
+                R.drawable.events,
+                R.drawable.places,
+                R.drawable.groups
         };
 
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
@@ -101,89 +78,13 @@ PostFragment.OnListFragmentInteractionListener {
 
         }
 
-
-        Bundle extras = getIntent().getExtras();
-        try {
-            if (extras != null) {
-                String details = extras.getString("Details_Returned");
-                Log.v("Details Activity Got:", details);
-                Process_JSON(details);
-            }
-            else
-                Log.v("Details",null);
-
-//            mtext.setText(result);
-        } catch (Exception e) {
-
-        }
-
-
     }
-
-    public void Process_JSON(String result) {
-//        Get Posts
-        try {
-
-            JSONArray posts_array = new JSONObject(result).getJSONObject("posts").getJSONArray("data");
-
-            Post_List = new ArrayList<PostItem>();
-
-            for (int i = 0; i < posts_array.length(); i++) {
-                JSONObject tempObject = posts_array.getJSONObject(i);
-                PostItem item = new PostItem();
-                item.setPicture(new JSONObject(result).getJSONObject("picture").getJSONObject("data").getString("url"));
-                item.setName(new JSONObject(result).getString("name"));
-                item.setDate(tempObject.getString("created_time"));
-                item.SetPost(tempObject.getString("message"));
-                Post_List.add(item);
-            }
-        }
-        catch (Exception e)
-        {
-
-        }
-//        Get Albums
-            try {
-            JSONObject jsonObject = new JSONObject(result).getJSONObject("albums");
-            JSONArray albums_array = new JSONArray(jsonObject.getString("data"));
-
-            listDataHeader = new ArrayList<String>();
-            listDataChild = new HashMap<String, List<String>>();
-
-            for (int i=0;i<albums_array.length();i++)
-            {
-                JSONObject tempObject = albums_array.getJSONObject(i);
-                listDataHeader.add(tempObject.getString("name"));
-                JSONArray photo = tempObject.getJSONObject("photos").getJSONArray("data");
-                ArrayList pictures=new ArrayList();
-                for(int j=0;j<photo.length();j++)
-                {
-                    String picture=photo.getJSONObject(j).getJSONArray("images").getJSONObject(0).getString("source");
-                    pictures.add(picture);
-//                    Log.v("Photos",picture.toString());
-                }
-                listDataChild.put(listDataHeader.get(i),pictures);
-
-            }
-            Log.v("Albums",listDataHeader.toString());
-//            String x =listDataHeader.get(0);
-            Log.v("Map",listDataChild.toString());
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_details, menu);
+        getMenuInflater().inflate(R.menu.menu_favorites_, menu);
         return true;
     }
 
@@ -234,7 +135,7 @@ PostFragment.OnListFragmentInteractionListener {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_details, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_favorites_, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
@@ -253,33 +154,65 @@ PostFragment.OnListFragmentInteractionListener {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
+            Bundle args;
             switch (position)
             {
                 case 0:
-                    AlbumsFragment album = new AlbumsFragment();
-                    return album;
+                    UserFragment user = new UserFragment();
+                    args = new Bundle();
+                    args.putInt("fav",1);
+                    user.setArguments(args);
+                    return user;
                 case 1:
-                    PostFragment post = new PostFragment();
-                    return post;
+                    PageFragment page = new PageFragment();
+                    args = new Bundle();
+                    args.putInt("fav",1);
+                    page.setArguments(args);
+                    return page;
+                case 2:
+                    EventFragment event = new EventFragment();
+                    args = new Bundle();
+                    args.putInt("fav",1);
+                    event.setArguments(args);
+                    return event;
+                case 3:
+                    PlaceFragment place = new PlaceFragment();
+                    args = new Bundle();
+                    args.putInt("fav",1);
+                    place.setArguments(args);
+                    return place;
+                case 4:
+                    GroupFragment group = new GroupFragment();
+                    args = new Bundle();
+                    args.putInt("fav",1);
+                    group.setArguments(args);
+                    return group;
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            // Show 5 total pages.
+            return 5;
         }
+
+
+
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Albums";
+                    return "Users";
                 case 1:
-                    return "Posts";
+                    return "Pages";
+                case 2:
+                    return "Events";
+                case 3:
+                    return "Places";
+                case 4:
+                    return "Groups";
             }
             return null;
         }

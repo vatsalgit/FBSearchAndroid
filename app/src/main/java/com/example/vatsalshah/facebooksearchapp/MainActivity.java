@@ -1,11 +1,14 @@
 package com.example.vatsalshah.facebooksearchapp;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,6 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -34,105 +39,18 @@ import javax.net.ssl.HttpsURLConnection;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-    Button mButton;
-    Button mClearButton;
-    EditText mEdit;
-    Intent intent;
+        implements NavigationView.OnNavigationItemSelectedListener,AboutMeFragment.OnFragmentInteractionListener,HomeFragment.OnFragmentInteractionListener
+{
 
-    public void Handle_Intent(String type, String result)
+    public void onListFragmentInteraction(DummyContent.DummyItem item)
     {
 
-        if(type=="user")
-        {
-            Log.v("response_user",result);
-            intent=new Intent(MainActivity.this, ResultsActivity.class);
-            intent.putExtra("Response_User",result);
-
-        }
-        else if(type=="page")
-        {
-            Log.v("response_page",result);
-            intent.putExtra("Response_Page",result);
-        }
-        else if(type=="event")
-        {
-            Log.v("response_event",result);
-            intent.putExtra("Response_Event",result);
-        }
-        else if(type=="place")
-        {
-            Log.v("response_place",result);
-            intent.putExtra("Response_Place",result);
-        }
-        else if(type=="group")
-        {
-            Log.v("response_group",result);
-            intent.putExtra("Response_Group",result);
-            startActivity(intent);
-        }
+    }
+    public void onFragmentInteraction(Uri uri)
+    {
 
     }
-    public class onbuttonclickHttpPost extends AsyncTask<String, Void, String> {
 
-        String type;
-        Intent intent;
-
-
-        public void setType(String type)
-        {
-            this.type=type;
-        }
-        public String getType()
-        {
-            return this.type;
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            Log.v("Query",params[0]);
-            setType(params[1]);
-            try {
-                byte[] result = null;
-                URL url = new URL("http://vatsal-angularenv.us-west-2.elasticbeanstalk.com/index.php/main.php?query="+params[0]+"&type="+params[1]);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(10000);
-                conn.setConnectTimeout(15000);
-                conn.setRequestMethod("GET");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                conn.connect();
-
-                if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    br.close();
-                    return sb.toString();
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            // something with data retrieved from server in doInBackground
-            type = getType();
-            Handle_Intent(type,result);
-//            Log.v("Response Returned", result);
-
-        }
-    }
 
 
 
@@ -153,39 +71,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
-        mButton = (Button)findViewById(R.id.searchbutton);
-        mClearButton = (Button)findViewById(R.id.clearbutton);
-        mEdit   = (EditText)findViewById(R.id.edit_query);
-
-        mButton.setOnClickListener(
-                new View.OnClickListener()
-                {
-                    public void onClick(View view)
-                    {
-                        String query = mEdit.getText().toString();
-                        Log.v("EditText",query);
-                        String types[] = new String[] {"user","page","event","place","group"};
-                        for (String type:types)
-                        {
-                            new onbuttonclickHttpPost().execute(query,type);
-                        }
-
-
-                    }
-                });
-
-        mClearButton.setOnClickListener(
-                new View.OnClickListener()
-                {
-                    public void onClick(View view)
-                    {
-                        mEdit.setText("");
-
-                    }
-                });
-
 
     }
 
@@ -225,26 +110,38 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        displaySelectedScreen(item.getItemId());
+        return true;
+    }
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
 
-//        } else if (id == R.id.nav_slideshow) {
-//
-//        } else if (id == R.id.nav_manage) {
+    private void displaySelectedScreen(int itemId) {
 
-        } else if (id == R.id.nav_share) {
+        //creating fragment object
+        Fragment fragment = null;
 
+        //initializing the fragment object which is selected
+        switch (itemId) {
+            case R.id.home:
+              fragment = new HomeFragment();
+                break;
+            case R.id.fav:
+//                fragment = new FavFragment();
+                break;
+            case R.id.about_me:
+                fragment = new AboutMeFragment();
+                break;
         }
-//        else if (id == R.id.nav_send) {
-//
-//        }
+
+        //replacing the fragment
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }
 

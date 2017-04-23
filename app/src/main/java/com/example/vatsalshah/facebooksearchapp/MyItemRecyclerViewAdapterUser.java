@@ -2,6 +2,7 @@ package com.example.vatsalshah.facebooksearchapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,6 +24,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
@@ -32,6 +35,7 @@ public class MyItemRecyclerViewAdapterUser extends RecyclerView.Adapter<MyItemRe
 
     private List<ResultItem> resultItemList;
     private Context mcontext;
+
 
     private final OnListFragmentInteractionListener mListener;
 
@@ -55,6 +59,20 @@ public class MyItemRecyclerViewAdapterUser extends RecyclerView.Adapter<MyItemRe
         final ResultItem Item = resultItemList.get(position);
         holder.mItem = Item;
         Picasso.with(mcontext).load(Item.getPicture()).resize(40,60).into(holder.mPictureView);
+
+        SharedPreferences  mPrefs = mcontext.getSharedPreferences("Favorites",MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        if(isAlreadyFav(Item.getId()))
+        {
+            holder.mFavButton.setImageResource(R.drawable.favorites_on);
+
+
+        }
+        else
+        {
+            holder.mFavButton.setImageResource(R.drawable.favorites_off);
+
+        }
 
 //        holder.mPictureView.setText("Picture");
         holder.mNameView.setText(Item.getName());
@@ -103,8 +121,9 @@ public class MyItemRecyclerViewAdapterUser extends RecyclerView.Adapter<MyItemRe
             protected void onPostExecute(String result) {
                 // something with data retrieved from server in doInBackground
                 Intent intent=new Intent(mcontext, DetailsActivity.class);
-                mcontext.startActivity(intent);
                 intent.putExtra("Details_Returned",result);
+                mcontext.startActivity(intent);
+
 
                 Log.v("ResultActivity_Returned", result);
             }
@@ -133,15 +152,44 @@ public class MyItemRecyclerViewAdapterUser extends RecyclerView.Adapter<MyItemRe
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
+                    SharedPreferences  mPrefs = mcontext.getSharedPreferences("Favorites",MODE_PRIVATE);
+                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                    if(isAlreadyFav(Item.getId()))
+                    {
+                        holder.mFavButton.setImageResource(R.drawable.favorites_off);
+                        prefsEditor.remove(Item.getId());
+                        prefsEditor.commit();
+                    }
+                    else
+                    {
+                        holder.mFavButton.setImageResource(R.drawable.favorites_on);
+                        prefsEditor.putString(Item.getId(),Item.getName());
+                        prefsEditor.commit();
+                    }
+
+                    Log.v("Shared Preferences",mPrefs.getString(Item.getId(),"Null"));
                     Log.v("Clicked On: ",Item.getName());
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
         });
 
-
-
     }
+
+    public boolean isAlreadyFav(String id)
+    {
+        SharedPreferences  mPrefs = mcontext.getSharedPreferences("Favorites",MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        String favorite=mPrefs.getString(id,"-1");
+        if (favorite.equals(new String("-1")))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+
 
     @Override
     public int getItemCount() {

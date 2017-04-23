@@ -60,7 +60,9 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_list, container, false);
-
+//        Bundle args = getArguments();
+//        int index = args.getInt("fav", -1);
+//        Log.v("index",index+"");
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
