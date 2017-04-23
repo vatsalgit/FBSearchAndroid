@@ -60,9 +60,9 @@ public class GroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group_list, container, false);
-//        Bundle args = getArguments();
-//        int index = args.getInt("fav", -1);
-//        Log.v("index",index+"");
+        Bundle args = getArguments();
+        int index = args.getInt("fav", -1);
+        Log.v("index",index+"");
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -72,7 +72,12 @@ public class GroupFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapterGroup(ResultsActivity.processed_map.get("group"), mListener,context));
+
+            if(index==0)
+                recyclerView.setAdapter(new MyItemRecyclerViewAdapterGroup(ResultsActivity.processed_map.get("group"), mListener,context,false));
+            else
+                recyclerView.setAdapter(new MyItemRecyclerViewAdapterGroup(Favorites_Activity.fav_group, mListener,context,true));
+
         }
         return view;
     }

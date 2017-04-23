@@ -60,10 +60,10 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_list, container, false);
-//        Bundle args = getArguments();
-//        int index = args.getInt("fav", -1);
-//        Log.v("index",index+"");
-        // Set the adapter
+        Bundle args = getArguments();
+        int index = args.getInt("fav", -1);
+        Log.v("index",index+"");
+//         Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
@@ -73,7 +73,12 @@ public class UserFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 //            Log.v("Processed Map",ResultsActivity.processed_map.get("user").toString());
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapterUser(ResultsActivity.processed_map.get("user"), mListener,context));
+            if(index==0)
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapterUser(ResultsActivity.processed_map.get("user"), mListener,context,false));
+            else
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapterUser(Favorites_Activity.fav_user, mListener,context,true));
+
+
         }
         return view;
     }

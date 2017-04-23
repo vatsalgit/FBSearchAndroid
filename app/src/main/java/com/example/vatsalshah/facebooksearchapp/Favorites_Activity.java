@@ -1,5 +1,6 @@
 package com.example.vatsalshah.facebooksearchapp;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -20,7 +21,26 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-public class Favorites_Activity extends AppCompatActivity {
+import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class Favorites_Activity extends AppCompatActivity implements UserFragment.OnListFragmentInteractionListener,
+        PageFragment.OnListFragmentInteractionListener,PlaceFragment.OnListFragmentInteractionListener,
+        EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInteractionListener
+{
+    public static List<ResultItem> fav_user;
+    public static List<ResultItem> fav_place;
+    public static List<ResultItem> fav_page;
+    public static List<ResultItem> fav_event;
+    public static List<ResultItem> fav_group;
+    public void onListFragmentInteraction(ResultItem item)
+    {
+
+    }
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -77,6 +97,67 @@ public class Favorites_Activity extends AppCompatActivity {
             tabLayout.getTabAt(i).setIcon(imageResId[i]);
 
         }
+        SharedPreferences mPrefs = this.getSharedPreferences("Favorites_User",MODE_PRIVATE);
+        Map<String, ?> allEntries = mPrefs.getAll();
+
+        fav_user=new ArrayList<ResultItem>();
+        Gson gson = new Gson();
+        for(Map.Entry<String,?> key: allEntries.entrySet())
+        {
+            String json = mPrefs.getString(key.getKey(), "-1");
+            ResultItem obj = gson.fromJson(json, ResultItem.class);
+            fav_user.add(obj);
+        }
+
+
+        mPrefs = this.getSharedPreferences("Favorites_Place",MODE_PRIVATE);
+        allEntries = mPrefs.getAll();
+
+        fav_place=new ArrayList<ResultItem>();
+        gson = new Gson();
+        for(Map.Entry<String,?> key: allEntries.entrySet())
+        {
+            String json = mPrefs.getString(key.getKey(), "-1");
+            ResultItem obj = gson.fromJson(json, ResultItem.class);
+            fav_place.add(obj);
+        }
+
+        mPrefs = this.getSharedPreferences("Favorites_Page",MODE_PRIVATE);
+        allEntries = mPrefs.getAll();
+
+        fav_page=new ArrayList<ResultItem>();
+        gson = new Gson();
+        for(Map.Entry<String,?> key: allEntries.entrySet())
+        {
+            String json = mPrefs.getString(key.getKey(), "-1");
+            ResultItem obj = gson.fromJson(json, ResultItem.class);
+            fav_page.add(obj);
+        }
+
+        mPrefs = this.getSharedPreferences("Favorites_Event",MODE_PRIVATE);
+        allEntries = mPrefs.getAll();
+
+        fav_event=new ArrayList<ResultItem>();
+        gson = new Gson();
+        for(Map.Entry<String,?> key: allEntries.entrySet())
+        {
+            String json = mPrefs.getString(key.getKey(), "-1");
+            ResultItem obj = gson.fromJson(json, ResultItem.class);
+            fav_event.add(obj);
+        }
+
+        mPrefs = this.getSharedPreferences("Favorites_Group",MODE_PRIVATE);
+        allEntries = mPrefs.getAll();
+
+        fav_group=new ArrayList<ResultItem>();
+        gson = new Gson();
+        for(Map.Entry<String,?> key: allEntries.entrySet())
+        {
+            String json = mPrefs.getString(key.getKey(), "-1");
+            ResultItem obj = gson.fromJson(json, ResultItem.class);
+            fav_group.add(obj);
+        }
+
 
     }
 

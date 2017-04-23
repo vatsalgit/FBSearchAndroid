@@ -72,6 +72,14 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        Fragment fragment = new HomeFragment();
+        if (fragment != null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+        }
+
+
     }
 
     @Override
@@ -126,7 +134,8 @@ public class MainActivity extends AppCompatActivity
               fragment = new HomeFragment();
                 break;
             case R.id.fav:
-//                fragment = new FavFragment();
+                Intent intent=new Intent(this, Favorites_Activity.class);
+                this.startActivity(intent);
                 break;
             case R.id.about_me:
                 fragment = new AboutMeFragment();

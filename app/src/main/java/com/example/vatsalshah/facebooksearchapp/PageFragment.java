@@ -61,9 +61,9 @@ public class PageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page_list, container, false);
 
-//        Bundle args = getArguments();
-//        int index = args.getInt("fav", -1);
-//        Log.v("index",index+"");
+        Bundle args = getArguments();
+        int index = args.getInt("fav", -1);
+        Log.v("index",index+"");
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -74,7 +74,10 @@ public class PageFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapterPage(ResultsActivity.processed_map.get("page"), mListener,context));
+            if(index==0)
+                recyclerView.setAdapter(new MyItemRecyclerViewAdapterPage(ResultsActivity.processed_map.get("page"), mListener,context,false));
+            else
+                recyclerView.setAdapter(new MyItemRecyclerViewAdapterPage(Favorites_Activity.fav_page, mListener,context,true));
         }
         return view;
     }

@@ -15,14 +15,18 @@ import android.widget.TextView;
 
 import com.example.vatsalshah.facebooksearchapp.PlaceFragment.OnListFragmentInteractionListener;
 import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent.DummyItem;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -35,15 +39,17 @@ public class MyItemRecyclerViewAdapterPlace extends RecyclerView.Adapter<MyItemR
 
     private List<ResultItem> resultItemList;
     private Context mcontext;
-
+    private int position;
+    boolean isFav;
+    public List<ResultItem> fav_place=Favorites_Activity.fav_place;
 
     private final OnListFragmentInteractionListener mListener;
 
-    public MyItemRecyclerViewAdapterPlace(List<ResultItem> resultItemList,OnListFragmentInteractionListener listener,Context context) {
+    public MyItemRecyclerViewAdapterPlace(List<ResultItem> resultItemList,OnListFragmentInteractionListener listener,Context context,Boolean isFav) {
         this.resultItemList=resultItemList;
         this.mListener=listener;
         this.mcontext=context;
-
+        this.isFav=isFav;
     }
 
     @Override
@@ -56,12 +62,13 @@ public class MyItemRecyclerViewAdapterPlace extends RecyclerView.Adapter<MyItemR
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+
         final ResultItem Item = resultItemList.get(position);
+
         holder.mItem = Item;
         Picasso.with(mcontext).load(Item.getPicture()).resize(40,60).into(holder.mPictureView);
 
-        SharedPreferences  mPrefs = mcontext.getSharedPreferences("Favorites",MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
         if(isAlreadyFav(Item.getId()))
         {
             holder.mFavButton.setImageResource(R.drawable.favorites_on);
@@ -124,6 +131,7 @@ public class MyItemRecyclerViewAdapterPlace extends RecyclerView.Adapter<MyItemR
                 intent.putExtra("Details_Returned",result);
                 mcontext.startActivity(intent);
 
+
                 Log.v("ResultActivity_Returned", result);
             }
         }
@@ -151,18 +159,28 @@ public class MyItemRecyclerViewAdapterPlace extends RecyclerView.Adapter<MyItemR
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    SharedPreferences  mPrefs = mcontext.getSharedPreferences("Favorites",MODE_PRIVATE);
+                    Gson gson = new Gson();
+                    SharedPreferences  mPrefs = mcontext.getSharedPreferences("Favorites_Place",MODE_PRIVATE);
                     SharedPreferences.Editor prefsEditor = mPrefs.edit();
                     if(isAlreadyFav(Item.getId()))
                     {
                         holder.mFavButton.setImageResource(R.drawable.favorites_off);
                         prefsEditor.remove(Item.getId());
+                        fav_place.remove(Item);
+                        if(isFav)
+                        {
+                            notifyItemRemoved(holder.getAdapterPosition());
+                            notifyItemRangeChanged(holder.getAdapterPosition(), resultItemList.size());
+                            holder.itemView.setVisibility(View.GONE);
+                        }
                         prefsEditor.commit();
                     }
                     else
                     {
                         holder.mFavButton.setImageResource(R.drawable.favorites_on);
-                        prefsEditor.putString(Item.getId(),Item.getName());
+                        String jsonText = gson.toJson(Item);
+                        prefsEditor.putString(Item.getId(),jsonText);
+//                        fav_place.add(Item);
                         prefsEditor.commit();
                     }
 
@@ -177,7 +195,7 @@ public class MyItemRecyclerViewAdapterPlace extends RecyclerView.Adapter<MyItemR
 
     public boolean isAlreadyFav(String id)
     {
-        SharedPreferences  mPrefs = mcontext.getSharedPreferences("Favorites",MODE_PRIVATE);
+        SharedPreferences  mPrefs = mcontext.getSharedPreferences("Favorites_Place",MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
         String favorite=mPrefs.getString(id,"-1");
         if (favorite.equals(new String("-1")))

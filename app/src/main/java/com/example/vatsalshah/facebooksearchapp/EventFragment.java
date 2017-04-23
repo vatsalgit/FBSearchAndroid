@@ -65,9 +65,9 @@ public class EventFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_list, container, false);
 
-//        Bundle args = getArguments();
-//        int index = args.getInt("fav", -1);
-//        Log.v("index",index+"");
+        Bundle args = getArguments();
+        int index = args.getInt("fav", -1);
+        Log.v("index",index+"");
 
 
         // Set the adapter
@@ -79,8 +79,11 @@ public class EventFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapterEvent(ResultsActivity.processed_map.get("event"), mListener,context));
-        }
+            if(index==0)
+                recyclerView.setAdapter(new MyItemRecyclerViewAdapterEvent(ResultsActivity.processed_map.get("event"), mListener,context,false));
+            else
+                recyclerView.setAdapter(new MyItemRecyclerViewAdapterEvent(Favorites_Activity.fav_event, mListener,context,true));
+            }
         return view;
     }
 
