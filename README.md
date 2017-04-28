@@ -44,7 +44,7 @@ There will be a slide out-menu which will provide access to the different screen
 Ø Home Screen
 The initial screen would default to showing the home screen as shown below.
  
-![Alt text](/screenshots/home.jpg?raw=true "Home Screen")
+![Alt text](home.jpg?raw=true "Home Screen")
 
 The interface consists of the following:
 
@@ -57,11 +57,11 @@ The interface consists of the following:
 
 Ø Slide Out App Drawer
 
-![Alt text](/screenshots/slide_out.png?raw=true "App Drawer Slide Out Functionality")
+![Alt text](slide_out.png?raw=true "App Drawer Slide Out Functionality")
 
 
 Ø Results Screen
-![Alt text](/screenshots/results.png?raw=true "Results Screen")
+![Alt text](results.png?raw=true "Results Screen")
 
 The search results would display the results in 5 tabs for the following types, like in Homework 8:
 
@@ -154,7 +154,7 @@ Each row in the table would contain the following:
 
 Ø Details Activity
 
-![Alt text](/screenshots/details.png?raw=true "Details Screen")
+![Alt text](details.png?raw=true "Details Screen")
 
 The albums tab should display the 5 albums, if available within the ‘ExpandableListView’ component. Also note that the cell should be collapsed by default. However, if no album data is found, just show a ‘TextView’ component showing an appropriate message.
 
@@ -162,16 +162,16 @@ The user detail screen also contains the option menu option in the navigation ba
 
 Please note that the text can be ‘Add to favorites’ or ‘Remove from favorite’ depending whether the user has already been added to favorite or not. Also note that marking the user as a favorite or removing the user from favorite should display an appropriate message.
 
-![Alt text](/screenshots/favs.png?raw=true "Facebook Share")
+![Alt text](favs.png?raw=true "Facebook Share")
 
 
-![Alt text](/screenshots/albums.jpg?raw=true "Albums")
+![Alt text](albums.jpg?raw=true "Albums")
 
 
-![Alt text](/screenshots/posts.png?raw=true "Posts")
+![Alt text](posts.png?raw=true "Posts")
 
 
-![Alt text](/screenshots/favorites.png?raw=true "Favorites")
+![Alt text](favorites.png?raw=true "Favorites")
 
 
 
