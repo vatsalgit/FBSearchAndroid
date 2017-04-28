@@ -171,7 +171,7 @@ Please note that the text can be ‘Add to favorites’ or ‘Remove from favori
 ![Alt text](posts.png?raw=true "Posts")
 
 
-![Alt text](favorites.png?raw=true "Favorites")
+![Alt text](favorites.jpg?raw=true "Favorites")
 
 
 
