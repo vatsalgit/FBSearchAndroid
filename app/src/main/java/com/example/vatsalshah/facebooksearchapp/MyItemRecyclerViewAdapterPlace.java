@@ -129,6 +129,12 @@ public class MyItemRecyclerViewAdapterPlace extends RecyclerView.Adapter<MyItemR
                 // something with data retrieved from server in doInBackground
                 Intent intent=new Intent(mcontext, DetailsActivity.class);
                 intent.putExtra("Details_Returned",result);
+                intent.putExtra("Type","place");
+                intent.putExtra("Id",Item.getId());
+                if(isFav)
+                    intent.putExtra("isFav",1);
+                else
+                    intent.putExtra("isFav",0);
                 mcontext.startActivity(intent);
 
 
@@ -166,7 +172,8 @@ public class MyItemRecyclerViewAdapterPlace extends RecyclerView.Adapter<MyItemR
                     {
                         holder.mFavButton.setImageResource(R.drawable.favorites_off);
                         prefsEditor.remove(Item.getId());
-                        fav_place.remove(Item);
+                        if(fav_place!=null)
+                         fav_place.remove(Item);
                         if(isFav)
                         {
                             notifyItemRemoved(holder.getAdapterPosition());

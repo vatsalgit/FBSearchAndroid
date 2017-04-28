@@ -1,6 +1,7 @@
 package com.example.vatsalshah.facebooksearchapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vatsalshah.facebooksearchapp.dummy.DummyContent;
 
@@ -36,21 +38,33 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.share.Sharer;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.model.SharePhoto;
 import com.facebook.share.model.SharePhotoContent;
 import com.facebook.share.widget.ShareDialog;
+import com.google.gson.Gson;
 
 public class DetailsActivity extends AppCompatActivity implements AlbumsFragment.OnFragmentInteractionListener,
 PostFragment.OnListFragmentInteractionListener {
     CallbackManager callbackManager;
     ShareDialog shareDialog;
 
+    public int isFav;
+    public String type;
+    public String id;
+    public String picture="";
+    public String Name;
     public static List<String> listDataHeader;
     public static HashMap<String, List<String>> listDataChild;
     public static List<PostItem> Post_List;
@@ -84,6 +98,16 @@ PostFragment.OnListFragmentInteractionListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this.getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
+        LoginManager loginManager = LoginManager.getInstance();
+        List<String> permissionNeeds = Arrays.asList("publish_actions"); // permission.
+
+        loginManager.logInWithPublishPermissions(this, permissionNeeds);
+
+        shareDialog = new ShareDialog(this);
+
+
+
         setContentView(R.layout.activity_details);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -123,6 +147,11 @@ PostFragment.OnListFragmentInteractionListener {
         try {
             if (extras != null) {
                 String details = extras.getString("Details_Returned");
+                type=extras.getString("Type");
+                Log.v("Type",type);
+                id = extras.getString("Id");
+                isFav = extras.getInt("isFav");
+                Log.v("Details Got Id",id);
                 Log.v("Details Activity Got:", details);
                 Process_JSON(details);
             }
@@ -135,11 +164,6 @@ PostFragment.OnListFragmentInteractionListener {
         }
 
 
-
-
-
-
-
     }
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
@@ -150,61 +174,123 @@ PostFragment.OnListFragmentInteractionListener {
 
     public void Process_JSON(String result) {
 //        Get Posts
+        Post_List = new ArrayList<PostItem>();
         try {
+            Name = new JSONObject(result).getString("name");
+            JSONObject picObj = new JSONObject(result).getJSONObject("picture");
+            if (picObj != null)
+                picture = picObj.getJSONObject("data").getString("url");
+            else {
+                if (picture == "" && type == "group")
+                    picture = "https://image.flaticon.com/icons/svg/20/20697.svg";
+                else if (picture == "" && type == "event")
+                    picture = "http://info.psinfoodservice.nl/img/original/weekly-calendar-icon-69702.png";
+            }
+
+            JSONObject postObj = new JSONObject(result).getJSONObject("posts");
+            if (postObj != null) {
+                JSONArray posts_array = new JSONObject(result).getJSONObject("posts").getJSONArray("data");
 
 
-            JSONArray posts_array = new JSONObject(result).getJSONObject("posts").getJSONArray("data");
+                if (posts_array != null) {
+                    for (int i = 0; i < posts_array.length(); i++) {
+                        JSONObject tempObject = posts_array.getJSONObject(i);
+                        PostItem item = new PostItem();
+                        item.setPicture(picture);
+                        item.setName(Name);
+                        item.setDate(tempObject.getString("created_time"));
+                        item.SetPost(tempObject.getString("message"));
+                        Post_List.add(item);
+                    }
+                }
 
-            Post_List = new ArrayList<PostItem>();
-
-            for (int i = 0; i < posts_array.length(); i++) {
-                JSONObject tempObject = posts_array.getJSONObject(i);
-                PostItem item = new PostItem();
-                item.setPicture(new JSONObject(result).getJSONObject("picture").getJSONObject("data").getString("url"));
-                item.setName(new JSONObject(result).getString("name"));
-                item.setDate(tempObject.getString("created_time"));
-                item.SetPost(tempObject.getString("message"));
-                Post_List.add(item);
             }
         }
         catch (Exception e)
         {
-
+            PostItem item = new PostItem();
+            item.setPicture("");
+            item.setName("No Posts To Display");
+            item.setDate("");
+            item.SetPost("");
+            Post_List.add(item);
         }
 //        Get Albums
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<String>>();
             try {
-            JSONObject jsonObject = new JSONObject(result).getJSONObject("albums");
-            JSONArray albums_array = new JSONArray(jsonObject.getString("data"));
+                JSONObject jsonObject = new JSONObject(result).getJSONObject("albums");
+                if (jsonObject != null) {
+                    JSONArray albums_array = new JSONArray(jsonObject.getString("data"));
 
-            listDataHeader = new ArrayList<String>();
-            listDataChild = new HashMap<String, List<String>>();
 
-            for (int i=0;i<albums_array.length();i++)
-            {
-                JSONObject tempObject = albums_array.getJSONObject(i);
-                listDataHeader.add(tempObject.getString("name"));
-                JSONArray photo = tempObject.getJSONObject("photos").getJSONArray("data");
-                ArrayList pictures=new ArrayList();
-                for(int j=0;j<photo.length();j++)
-                {
-                    String picture=photo.getJSONObject(j).getJSONArray("images").getJSONObject(0).getString("source");
-                    pictures.add(picture);
+                    for (int i = 0; i < albums_array.length(); i++) {
+                        JSONObject tempObject = albums_array.getJSONObject(i);
+                        listDataHeader.add(tempObject.getString("name"));
+                        JSONArray photo = tempObject.getJSONObject("photos").getJSONArray("data");
+                        ArrayList pictures = new ArrayList();
+                        for (int j = 0; j < photo.length(); j++) {
+                            String picture = photo.getJSONObject(j).getJSONArray("images").getJSONObject(0).getString("source");
+                            pictures.add(picture);
 //                    Log.v("Photos",picture.toString());
-                }
-                listDataChild.put(listDataHeader.get(i),pictures);
+                        }
+                        listDataChild.put(listDataHeader.get(i), pictures);
 
-            }
-            Log.v("Albums",listDataHeader.toString());
+                    }
+                    Log.v("Albums", listDataHeader.toString());
 //            String x =listDataHeader.get(0);
-            Log.v("Map",listDataChild.toString());
+                    Log.v("Map", listDataChild.toString());
+                }
+                else
+                {
+
+                }
+
+                } catch(JSONException e){
+                    listDataHeader.add("No Albums To Display");
+                    e.printStackTrace();
+                }
 
 
+    }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
+    public boolean isAlreadyFav(String id,String type)
+    {
+        SharedPreferences mPrefs=null;
+        SharedPreferences.Editor prefsEditor;
+        if(type.equals(new String("user")))
+        {
+            mPrefs = this.getSharedPreferences("Favorites_User",MODE_PRIVATE);
+            prefsEditor =  mPrefs.edit();
+        }
+        else if (type.equals(new String("page")))
+        {
+            mPrefs = this.getSharedPreferences("Favorites_Page",MODE_PRIVATE);
+            prefsEditor =  mPrefs.edit();
+        }
+        else if (type.equals(new String("place")))
+        {
+            mPrefs = this.getSharedPreferences("Favorites_Place",MODE_PRIVATE);
+            prefsEditor =  mPrefs.edit();
+        }
+        else if (type.equals(new String("event")))
+        {
+            mPrefs = this.getSharedPreferences("Favorites_Event",MODE_PRIVATE);
+            prefsEditor =  mPrefs.edit();
+        }
+        else if (type.equals(new String("group")))
+        {
+            mPrefs = this.getSharedPreferences("Favorites_Group",MODE_PRIVATE);
+            prefsEditor =  mPrefs.edit();
         }
 
+        String favorite=mPrefs.getString(id,"-1");
+        if (favorite.equals(new String("-1")))
+        {
+            return false;
+        }
 
+        return true;
     }
 
 
@@ -213,6 +299,15 @@ PostFragment.OnListFragmentInteractionListener {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_details, menu);
+        MenuItem fav_item = menu.findItem(R.id.add_to_fav);
+        if(isAlreadyFav(id,type))
+        {
+            fav_item.setTitle("Remove from Favorite");
+        }
+        else
+        {
+            fav_item.setTitle("Add To Favorite");
+        }
         return true;
     }
 
@@ -224,28 +319,122 @@ PostFragment.OnListFragmentInteractionListener {
         int id = item.getItemId();
 
         if (item.getItemId() == android.R.id.home) {
-            finish(); // close this activity and return to preview activity (if there is any)
+            Intent intent;
+            if(isFav==0) {
+                intent = new Intent(this, ResultsActivity.class);
+            }
+            else
+            {
+                intent = new Intent(this, Favorites_Activity.class);
+            }
+            if (type.equals(new String("page")))
+                intent.putExtra("position", 1);
+            else if (type.equals(new String("event")))
+                intent.putExtra("position", 2);
+            else if (type.equals(new String("place")))
+                intent.putExtra("position", 3);
+            else if (type.equals(new String("group")))
+                intent.putExtra("position", 4);
+
+
+            this.startActivity(intent);
+            // close this activity and return to preview activity (if there is any)
         }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.add_to_fav) {
+
+            SharedPreferences mPrefs=null;
+            SharedPreferences.Editor prefsEditor=null;
+            if(type.equals(new String("user")))
+            {
+                mPrefs = this.getSharedPreferences("Favorites_User",MODE_PRIVATE);
+                prefsEditor =  mPrefs.edit();
+            }
+            else if (type.equals(new String("page")))
+            {
+                mPrefs = this.getSharedPreferences("Favorites_Page",MODE_PRIVATE);
+                prefsEditor =  mPrefs.edit();
+            }
+            else if (type.equals(new String("place")))
+            {
+                mPrefs = this.getSharedPreferences("Favorites_Place",MODE_PRIVATE);
+                prefsEditor =  mPrefs.edit();
+            }
+            else if (type.equals(new String("event")))
+            {
+                mPrefs = this.getSharedPreferences("Favorites_Event",MODE_PRIVATE);
+                prefsEditor =  mPrefs.edit();
+            }
+            else if (type.equals(new String("group")))
+            {
+                mPrefs = this.getSharedPreferences("Favorites_Group",MODE_PRIVATE);
+                prefsEditor =  mPrefs.edit();
+            }
+
+            if(isAlreadyFav(this.id,this.type))
+            {
+
+                prefsEditor.remove(this.id);
+                prefsEditor.commit();
+                MyItemRecyclerViewAdapterPage us = new MyItemRecyclerViewAdapterPage();
+                us.notifyDataSetChanged();
+                Toast.makeText(this, "Removed From Favorites!",
+                        Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                Gson gson = new Gson();
+                ResultItem rsitem = new ResultItem();
+                rsitem.setName(Name);
+                rsitem.setId(this.id);
+                rsitem.setPicture(picture);
+                String jsonText = gson.toJson(rsitem);
+                prefsEditor.putString(this.id,jsonText);
+                prefsEditor.commit();
+                MyItemRecyclerViewAdapterPage us = new MyItemRecyclerViewAdapterPage();
+                us.notifyDataSetChanged();
+                Toast.makeText(this, "Added To Favorites!",
+                        Toast.LENGTH_LONG).show();
+            }
+
+
+
+
+
             return true;
         }
 
         if(id== R.id.post_to_fb)
         {
-            callbackManager = CallbackManager.Factory.create();
-            shareDialog = new ShareDialog(this);
+
 //            Bitmap image=getBitmapFromURL(Post_List.get(0).getPicture());
             if (ShareDialog.canShow(ShareLinkContent.class)) {
                 ShareLinkContent content = new ShareLinkContent.Builder()
                 .setContentUrl(Uri.parse("www.google.com"))
                 .setContentDescription("FB Search from USC CSCI 571")
-                .setImageUrl(Uri.parse(Post_List.get(0).getPicture()))
-                .setContentTitle(Post_List.get(0).getName())
-
+                .setImageUrl(Uri.parse(picture))
+                .setContentTitle(Name)
                 .build();
-                shareDialog.show(content);
+
+                shareDialog.show(content,ShareDialog.Mode.NATIVE);
+                shareDialog.registerCallback(callbackManager, new FacebookCallback<Sharer.Result>() {
+                    @Override
+                    public void onSuccess(Sharer.Result result) {
+                        Toast.makeText(DetailsActivity.this, "You shared this post!",Toast.LENGTH_LONG).show();
+
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Toast.makeText(DetailsActivity.this, "Post was not shared!",Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onError(FacebookException error) {
+
+                    } });
+
             }
         }
 

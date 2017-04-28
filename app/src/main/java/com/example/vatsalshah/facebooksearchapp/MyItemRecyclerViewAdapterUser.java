@@ -43,7 +43,15 @@ public class MyItemRecyclerViewAdapterUser extends RecyclerView.Adapter<MyItemRe
     boolean isFav;
     public List<ResultItem> fav_user=Favorites_Activity.fav_user;
 
-    private final OnListFragmentInteractionListener mListener;
+
+
+    public MyItemRecyclerViewAdapterUser()
+    {
+
+    }
+
+    private OnListFragmentInteractionListener mListener;
+
 
     public MyItemRecyclerViewAdapterUser(List<ResultItem> resultItemList,OnListFragmentInteractionListener listener,Context context,Boolean isFav) {
         this.resultItemList=resultItemList;
@@ -129,6 +137,12 @@ public class MyItemRecyclerViewAdapterUser extends RecyclerView.Adapter<MyItemRe
                 // something with data retrieved from server in doInBackground
                 Intent intent=new Intent(mcontext, DetailsActivity.class);
                 intent.putExtra("Details_Returned",result);
+                intent.putExtra("Type","user");
+                intent.putExtra("Id",Item.getId());
+                if(isFav)
+                    intent.putExtra("isFav",1);
+                else
+                    intent.putExtra("isFav",0);
                 mcontext.startActivity(intent);
 
 
@@ -166,6 +180,7 @@ public class MyItemRecyclerViewAdapterUser extends RecyclerView.Adapter<MyItemRe
                     {
                         holder.mFavButton.setImageResource(R.drawable.favorites_off);
                         prefsEditor.remove(Item.getId());
+                        if(fav_user!=null)
                         fav_user.remove(Item);
                         if(isFav)
                         {

@@ -1,5 +1,6 @@
 package com.example.vatsalshah.facebooksearchapp;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.design.widget.TabLayout;
@@ -65,6 +66,20 @@ public class Favorites_Activity extends AppCompatActivity implements UserFragmen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Favorites");
+
+        int position=0;
+        Bundle extras = getIntent().getExtras();
+        try {
+            if (extras != null) {
+                position = extras.getInt("position");
+            }
+        }
+        catch (Exception e)
+        {
+
+        }
+
+
         // add back arrow to toolbar
         if (getSupportActionBar() != null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -158,6 +173,7 @@ public class Favorites_Activity extends AppCompatActivity implements UserFragmen
             fav_group.add(obj);
         }
 
+        mViewPager.setCurrentItem(position);
 
     }
 
@@ -177,7 +193,8 @@ public class Favorites_Activity extends AppCompatActivity implements UserFragmen
         int id = item.getItemId();
 
         if (item.getItemId() == android.R.id.home) {
-            finish(); // close this activity and return to preview activity (if there is any)
+            Intent intent = new Intent(this,MainActivity.class);
+            this.startActivity(intent); // close this activity and return to preview activity (if there is any)
         }
 
         //noinspection SimplifiableIfStatement

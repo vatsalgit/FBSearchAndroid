@@ -10,6 +10,16 @@ public class PostItem
     private String picture;
     private String name;
     private String post;
+    private String id;
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+    public String getId()
+    {
+        return id;
+    }
 
     public String getDate() {
         return date;

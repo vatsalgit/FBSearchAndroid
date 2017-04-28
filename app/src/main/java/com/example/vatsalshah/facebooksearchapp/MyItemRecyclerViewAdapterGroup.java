@@ -129,10 +129,16 @@ public class MyItemRecyclerViewAdapterGroup extends RecyclerView.Adapter<MyItemR
                 // something with data retrieved from server in doInBackground
                 Intent intent=new Intent(mcontext, DetailsActivity.class);
                 intent.putExtra("Details_Returned",result);
+                intent.putExtra("Type","group");
+                intent.putExtra("Id",Item.getId());
+                if(isFav)
+                    intent.putExtra("isFav",1);
+                else
+                    intent.putExtra("isFav",0);
                 mcontext.startActivity(intent);
 
 
-                Log.v("ResultActivity_Returned", result);
+//                Log.v("ResultActivity_Returned", result);
             }
         }
 
@@ -166,6 +172,7 @@ public class MyItemRecyclerViewAdapterGroup extends RecyclerView.Adapter<MyItemR
                     {
                         holder.mFavButton.setImageResource(R.drawable.favorites_off);
                         prefsEditor.remove(Item.getId());
+                        if(fav_group!=null)
                         fav_group.remove(Item);
                         if(isFav)
                         {

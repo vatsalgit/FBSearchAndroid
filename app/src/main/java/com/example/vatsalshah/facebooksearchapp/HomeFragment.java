@@ -2,6 +2,8 @@ package com.example.vatsalshah.facebooksearchapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,12 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static android.R.attr.data;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 /**
@@ -37,6 +43,7 @@ public class HomeFragment extends Fragment {
     Button mClearButton;
     EditText mEdit;
     Intent intent;
+    GPSTracker gps;
     Context mcontext;
 
     // TODO: Rename and change types of parameters
@@ -90,7 +97,11 @@ public class HomeFragment extends Fragment {
             setType(params[1]);
             try {
                 byte[] result = null;
-                URL url = new URL("http://vatsal-angularenv.us-west-2.elasticbeanstalk.com/index.php/main.php?query=" + params[0] + "&type=" + params[1]);
+                URL url;
+                if (params[1].equals(new String("place")))
+                    url = new URL("http://vatsal-angularenv.us-west-2.elasticbeanstalk.com/index.php/main.php?query=" + params[0] + "&type=" + params[1]+"&center=34.0195,118.2895");
+                else
+                    url = new URL("http://vatsal-angularenv.us-west-2.elasticbeanstalk.com/index.php/main.php?query=" + params[0] + "&type=" + params[1]);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000);
                 conn.setConnectTimeout(15000);
@@ -160,11 +171,13 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MainActivity) getActivity()).setTitle("Home");
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -176,14 +189,24 @@ public class HomeFragment extends Fragment {
         mClearButton = (Button) view.findViewById(R.id.clearbutton);
         mEdit = (EditText) view.findViewById(R.id.edit_query);
 
+
+
         mButton.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
+
                         String query = mEdit.getText().toString();
-                        Log.v("EditText", query);
-                        String types[] = new String[]{"user", "page", "event", "place", "group"};
-                        for (String type : types) {
-                            new onbuttonclickHttpPost().execute(query, type);
+                        if (query.equals(new String(""))) {
+                            Toast.makeText(getActivity(), "Please Enter a Keyword",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        {
+                            Log.v("EditText", query);
+                            String types[] = new String[]{"user", "page", "event", "place", "group"};
+                            for (String type : types) {
+                                new onbuttonclickHttpPost().execute(query, type);
+                            }
                         }
 
 

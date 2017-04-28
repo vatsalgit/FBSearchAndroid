@@ -1,5 +1,6 @@
 package com.example.vatsalshah.facebooksearchapp;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -169,13 +170,13 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
 
 
 
-
+        int position=0;
         mtext = (TextView)findViewById(R.id.display);
 
         Bundle extras = getIntent().getExtras();
         try {
             if (extras != null) {
-
+                position = extras.getInt("position");
                 raw_map.put("user",extras.getString("Response_User"));
                 raw_map.put("page",extras.getString("Response_Page"));
                 raw_map.put("event",extras.getString("Response_Event"));
@@ -198,6 +199,8 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
 
         }
 
+        mViewPager.setCurrentItem(position);
+
     }
 
 
@@ -216,7 +219,9 @@ EventFragment.OnListFragmentInteractionListener, GroupFragment.OnListFragmentInt
         int id = item.getItemId();
         // handle arrow click here
         if (item.getItemId() == android.R.id.home) {
-            finish(); // close this activity and return to preview activity (if there is any)
+            Intent intent = new Intent(this,MainActivity.class);
+            this.startActivity(intent);
+            // close this activity and return to preview activity (if there is any)
         }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {

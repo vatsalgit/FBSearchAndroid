@@ -2,6 +2,7 @@ package com.example.vatsalshah.facebooksearchapp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,7 +24,7 @@ import java.util.List;
  * interface.
  */
 public class PageFragment extends Fragment {
-
+    RecyclerView recyclerView;
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
@@ -54,6 +55,8 @@ public class PageFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+
     }
 
     @Override
@@ -68,12 +71,9 @@ public class PageFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
+            recyclerView = (RecyclerView)view.findViewById(R.id.list);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+
             if(index==0)
                 recyclerView.setAdapter(new MyItemRecyclerViewAdapterPage(ResultsActivity.processed_map.get("page"), mListener,context,false));
             else
@@ -99,6 +99,7 @@ public class PageFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

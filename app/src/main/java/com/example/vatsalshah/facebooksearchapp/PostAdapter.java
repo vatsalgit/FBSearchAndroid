@@ -44,10 +44,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final PostItem Item = postItemList.get(position);
         holder.mItem = Item;
+
+        if(Item.getPicture()!="")
         Picasso.with(mcontext).load(Item.getPicture()).into(holder.PostPicture);
 
         holder.NameView.setText(Item.getName());
 
+        if(Item.getDate()!="")
         holder.DateView.setText(Item.getDate().replace("T"," ").substring(0,Item.getDate().length()-5));
         holder.PostContent.setText(Item.getPost());
 
