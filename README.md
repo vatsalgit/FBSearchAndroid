@@ -2,23 +2,23 @@
 Android Application Built using the Facebook API REST Service
 
 
-Ø	Mobile user experience for Facebook Search using the Facebook Graph API
+-	Mobile user experience for Facebook Search using the Facebook Graph API
 
-Ø	Add social networking features using the Facebook SDK for Android
+-	Added social networking features using the Facebook SDK for Android
 
-Ø Facebook Graph API
+- Facebook Graph API
 
 The Graph API is the primary way to get data out of, and put date into Facebook's platform. It's a lowlevel HTTP-based API that you can use to programmatically query data, post new stories, manage ads, upload photos, and perform a variety of other tasks that an app might implement. To learn more about the Facebook Graph API visit:
 
 https://developers.facebook.com/docs/graph-api
 
-Ø Amazon Web Services (AWS)
+### Amazon Web Services (AWS)
 
 AWS is Amazon’s implementation of cloud computing. Included in AWS is Amazon Elastic Compute Cloud (EC2), which delivers scalable, pay-as-you-go compute capacity in the cloud, and AWS Elastic Beanstalk, an even easier way to quickly deploy and manage applications in the AWS cloud. You simply upload your application, and Elastic Beanstalk automatically handles the deployment details of capacity provisioning, load balancing, auto-scaling, and application health monitoring. Elastic Beanstalk is built using familiar software stacks such as the Apache HTTP Server, PHP, and Python, Passenger for Ruby, IIS 7.5 for .NET, and Apache Tomcat for Java.
 
 The Amazon Web Services homepage is available at: http://aws.amazon.com/
 
-Ø Prerequisites
+### Prerequisites
 A.	Download and install Android Studio. You may use any other IDE other than Android Studio such as Eclipse, but you will be on your own if problems spring up.
 
 B.	First you need to install Java on your local machine. You can download JDK 8 from - http://www.oracle.com/technetwork/java/javase/downloads/index.html. For windows users, after installing the JDK, you need to add environment variables for JDK.
@@ -44,7 +44,8 @@ There will be a slide out-menu which will provide access to the different screen
 Ø Home Screen
 The initial screen would default to showing the home screen as shown below.
  
-![Alt text](home.jpg?raw=true "Home Screen")
+<img src="home.jpg" width="500" height="500">
+
 
 The interface consists of the following:
 
@@ -55,13 +56,13 @@ The interface consists of the following:
 •	A component to show the navigation bar that has the hamburger menu icon to show the slide-out menu.
 
 
-Ø Slide Out App Drawer
+- Slide Out App Drawer
+<img src="slide_out.png" width="500" height="500">
 
-![Alt text](slide_out.png?raw=true "App Drawer Slide Out Functionality")
 
+- Results Screen
+<img src="results.png" width="500" height="500">
 
-Ø Results Screen
-![Alt text](results.png?raw=true "Results Screen")
 
 The search results would display the results in 5 tabs for the following types, like in Homework 8:
 
@@ -75,7 +76,7 @@ The search results would display the results in 5 tabs for the following types, 
 
       •	Group
       
-Ø User Tab
+- User Tab
 
 The user tab would display the search result for the type – ‘user’. The screen consists of the following:
 
@@ -90,7 +91,7 @@ Each row in the table would contain the following:
 3.	Favorite – ‘ImageView’ component indicating whether the user has been marked as favorite
 4.	Detail Disclosure – Use the ‘ImageView’ component to handle click action for user’s detail described in the user detail screen next.
 
-Ø Pages Tab
+- Pages Tab
 
 The page tab would display the search result for the type – ‘page’. The screen consists of the following:
 
@@ -105,7 +106,7 @@ Each row in the table would contain the following:
 3.	Favorite – ‘ImageView’ component indicating whether the page has been marked as favorite
 4.	Detail Disclosure – Use the ‘ImageView’ component to handle click action for page’s detail described in the page detail screen next.
 
-Ø Events Tab
+- Events Tab
 
 The page tab would display the search result for the type – ‘page’. The screen consists of the following:
 
@@ -120,7 +121,7 @@ Each row in the table would contain the following:
 3.	Favorite – ‘ImageView’ component indicating whether the page has been marked as favorite
 4.	Detail Disclosure – Use the ‘ImageView’ component to handle click action for page’s detail described in the page detail screen next.
 
-Ø Places Tab
+- Places Tab
 
 The page tab would display the search result for the type – ‘page’. The screen consists of the following:
 
@@ -137,7 +138,7 @@ Each row in the table would contain the following:
 
 Please note that you get the user’s current location to passed to the API for the parameter center.
 
-Ø Group Tab
+- Group Tab
 
 The page tab would display the search result for the type – ‘page’. The screen consists of the following:
 
@@ -152,9 +153,8 @@ Each row in the table would contain the following:
 3.	Favorite – ‘ImageView’ component indicating whether the page has been marked as favorite
 4.	Detail Disclosure – Use the ‘ImageView’ component to handle click action for page’s detail described in the page detail screen next.
 
-Ø Details Activity
-
-![Alt text](details.png?raw=true "Details Screen")
+- Details Activity
+<img src="details.png" width="500" height="500">
 
 The albums tab should display the 5 albums, if available within the ‘ExpandableListView’ component. Also note that the cell should be collapsed by default. However, if no album data is found, just show a ‘TextView’ component showing an appropriate message.
 
@@ -162,16 +162,15 @@ The user detail screen also contains the option menu option in the navigation ba
 
 Please note that the text can be ‘Add to favorites’ or ‘Remove from favorite’ depending whether the user has already been added to favorite or not. Also note that marking the user as a favorite or removing the user from favorite should display an appropriate message.
 
-![Alt text](favs.png?raw=true "Facebook Share")
+<img src="favs.png" width="500" height="500">
 
 
-![Alt text](albums.jpg?raw=true "Albums")
+<img src="albums.jpg" width="500" height="500">
 
+<img src="posts.png" width="500" height="500">
 
-![Alt text](posts.png?raw=true "Posts")
+<img src="favorites.jpg" width="500" height="500">
 
-
-![Alt text](favorites.jpg?raw=true "Favorites")
 
 
 
